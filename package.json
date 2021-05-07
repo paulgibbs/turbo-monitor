@@ -9,7 +9,9 @@
         "check-format": "prettier --ignore-path .gitignore --list-different .",
         "format": "prettier --ignore-path .gitignore --write .",
         "lint": "eslint --ignore-path .gitignore --ext .js,.jsx .",
-        "validate": "npm run check-format && npm run lint"
+        "validate": "npm run check-format && npm run lint",
+        "prepare": "husky install",
+        "pre-commit": "lint-staged"
     },
     "dependencies": {
         "next": "10.2.0",
@@ -21,6 +23,17 @@
         "eslint": "^7.25.0",
         "eslint-config-prettier": "^8.3.0",
         "eslint-plugin-react": "^7.23.2",
+        "husky": "^6.0.0",
+        "lint-staged": "^10.5.4",
         "prettier": "2.2.1"
+    },
+    "lint-staged": {
+        "**/*.+(js|jsx)": [
+            "prettier --write",
+            "eslint"
+        ],
+        "**/*.(json|md)": [
+            "prettier --write"
+        ]
     }
 }
