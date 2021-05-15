@@ -2,7 +2,7 @@ exports.up = (knex) => {
     return knex.schema.createTable('users', (table) => {
         table.increments('id').primary();
         table.string('email').unique();
-        table.string('password', 60);
+        table.string('password');
         table.string('name');
         table.timestamps(true, true);
     });
