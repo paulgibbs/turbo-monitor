@@ -2,7 +2,7 @@ import { User } from '../../../db/models/User';
 import db from '../../../db/db';
 
 const handler = async (req, res) => {
-    const { query, method } = req;
+    const { query, body, method } = req;
 
     const user = await User.query().findById(query.id);
 
@@ -21,9 +21,13 @@ const handler = async (req, res) => {
                 data: user,
             });
         } else if (method === 'PUT') {
+            const { name, email, password } = body;
             await User.query()
                 .findById(user.id)
                 .patch({
+                    name: name,
+                    email: email,
+                    password: password,
                     updated_at: db.raw('NOW()'),
                 });
             res.status(204).end();
