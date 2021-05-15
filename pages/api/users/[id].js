@@ -1,5 +1,6 @@
 import { User } from '../../../db/models/User';
 import db from '../../../db/db';
+import { hashPassword } from '../../../lib/auth';
 
 const handler = async (req, res) => {
     const { query, body, method } = req;
@@ -27,7 +28,7 @@ const handler = async (req, res) => {
                 .patch({
                     name: name,
                     email: email,
-                    password: password,
+                    password: typeof password !== 'undefined' ? await hashPassword(password) : undefined,
                     updated_at: db.raw('NOW()'),
                 });
             res.status(204).end();

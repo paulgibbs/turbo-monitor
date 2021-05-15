@@ -1,5 +1,6 @@
 import { User } from '../../../db/models/User';
 import db from '../../../db/db';
+import { hashPassword } from '../../../lib/auth';
 
 const handler = async (req, res) => {
     const { method, body } = req;
@@ -10,10 +11,11 @@ const handler = async (req, res) => {
             });
         } else if (method === 'POST') {
             const { name, email, password } = body;
+
             const user = await User.query().insert({
                 name: name,
                 email: email,
-                password: password,
+                password: typeof password !== 'undefined' ? await hashPassword(password) : undefined,
                 created_at: db.raw('NOW()'),
                 updated_at: db.raw('NOW()'),
             });
