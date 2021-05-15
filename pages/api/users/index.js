@@ -3,30 +3,26 @@ import db from '../../../db/db';
 
 const handler = async (req, res) => {
     const { method, body } = req;
-    const { name, email, password } = body;
-
     try {
-        switch (method) {
-            case 'GET':
-                res.status(200).json({
-                    data: await User.query(),
-                });
-                break;
-            case 'POST':
-                res.status(201).json({
-                    data: await User.query().insert({
-                        name: name,
-                        email: email,
-                        password: password,
-                        created_at: db.raw('NOW()'),
-                        updated_at: db.raw('NOW()'),
-                    }),
-                });
-                break;
-            default:
-                res.setHeader('Allow', ['GET', 'POST']);
-                res.status(405).end();
-                break;
+        if (method === 'GET') {
+            res.status(200).json({
+                data: await User.query(),
+            });
+        } else if (method === 'POST') {
+            const { name, email, password } = body;
+            const user = await User.query().insert({
+                name: name,
+                email: email,
+                password: password,
+                created_at: db.raw('NOW()'),
+                updated_at: db.raw('NOW()'),
+            });
+            res.status(201).json({
+                data: user,
+            });
+        } else {
+            res.setHeader('Allow', ['GET', 'POST']);
+            res.status(405).end();
         }
     } catch (err) {
         res.status(500).json({

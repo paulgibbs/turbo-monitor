@@ -16,34 +16,29 @@ const handler = async (req, res) => {
     }
 
     try {
-        switch (method) {
-            case 'GET':
-                res.status(200).json({
-                    data: user,
+        if (method === 'GET') {
+            res.status(200).json({
+                data: user,
+            });
+        } else if (method === 'PUT') {
+            await User.query()
+                .findById(user.id)
+                .patch({
+                    updated_at: db.raw('NOW()'),
                 });
-                break;
-            case 'PUT':
-                await User.query()
-                    .findById(user.id)
-                    .patch({
-                        updated_at: db.raw('NOW()'),
-                    });
-                res.status(204).end();
-                break;
-            case 'DELETE':
-                await User.query().deleteById(user.id);
-                res.status(204).end();
-                break;
-            default:
-                res.setHeader('Allow', ['GET', 'PUT', 'DELETE']);
-                res.status(405).end();
-                break;
+            res.status(204).end();
+        } else if (method === 'DELETE') {
+            await User.query().deleteById(user.id);
+            res.status(204).end();
+        } else {
+            res.setHeader('Allow', ['GET', 'PUT', 'DELETE']);
+            res.status(405).end();
         }
     } catch (err) {
         res.status(500).json({
             error: {
                 status: 500,
-                message: process.env.NODE_ENV !== 'production' ? err.message : 'An unexpected error occurred',
+                message: process.env.APP_DEBUG ? err.message : 'An unexpected error occurred',
             },
         });
     }
