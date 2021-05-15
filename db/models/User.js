@@ -18,6 +18,13 @@ class User extends Model {
             },
         };
     }
+    $formatJson(json) {
+        json = super.$formatJson(json);
+        if (json.password) {
+            delete json.password;
+        }
+        return json;
+    }
 }
 
 module.exports = {
