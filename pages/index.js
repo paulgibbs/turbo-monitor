@@ -1,12 +1,9 @@
-import Head from 'next/head';
+import { Layout } from '../components/layout/Layout';
 
 export default function Home() {
     return (
-        <div>
-            <Head>
-                <title>Turbo</title>
-            </Head>
+        <Layout>
             <p>Turbo</p>
-        </div>
+        </Layout>
     );
 }
