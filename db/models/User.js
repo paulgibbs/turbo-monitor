@@ -1,5 +1,7 @@
 const { Model } = require('objection');
 
+const { hashPassword } = require('../../lib/auth');
+
 class User extends Model {
     static get tableName() {
         return 'users';
@@ -24,6 +26,20 @@ class User extends Model {
             delete json.password;
         }
         return json;
+    }
+    async $beforeInsert(...args) {
+        await super.$beforeInsert(...args);
+
+        this.password = await hashPassword(this.password);
+    }
+    async $beforeUpdate(queryOptions, ...args) {
+        await super.$beforeUpdate(queryOptions, ...args);
+
+        if (queryOptions.patch && this.password === undefined) {
+            return;
+        }
+
+        this.password = await hashPassword(this.password);
     }
 }
 
