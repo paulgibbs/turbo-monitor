@@ -1,3 +1,5 @@
+import Joi from 'joi';
+
 import { User } from '../../../db/models/User';
 import db from '../../../db/db';
 import { hashPassword } from '../../../lib/auth';
@@ -23,6 +25,15 @@ const handler = async (req, res) => {
             });
         } else if (method === 'PUT') {
             const { name, email, password } = body;
+
+            const schema = Joi.object({
+                name: Joi.string(),
+                email: Joi.string().email().required(),
+                password: Joi.string().min(8),
+            });
+
+            Joi.assert({ name, email, password }, schema);
+
             await User.query()
                 .findById(user.id)
                 .patch({
@@ -40,12 +51,25 @@ const handler = async (req, res) => {
             res.status(405).end();
         }
     } catch (err) {
-        res.status(500).json({
-            error: {
-                status: 500,
-                message: process.env.APP_DEBUG ? err.message : 'An unexpected error occurred',
-            },
-        });
+        if (Joi.isError(err)) {
+            return res.status(422).json({
+                errors: err.details.map((e) => ({
+                    status: 422,
+                    title: 'Validation Erorr',
+                    detail: e.message,
+                })),
+            });
+        } else {
+            res.status(500).json({
+                errors: [
+                    {
+                        status: 500,
+                        title: 'Unexpected Error',
+                        detail: process.env.APP_DEBUG ? err.message : 'An unexpected error occurred',
+                    },
+                ],
+            });
+        }
     }
 };
 
