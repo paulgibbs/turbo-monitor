@@ -38,18 +38,22 @@ const handler = async (req, res) => {
         }
     } catch (err) {
         if (Joi.isError(err)) {
-            return res.json({
-                error: {
+            return res.status(422).json({
+                errors: err.details.map((e) => ({
                     status: 422,
-                    message: err.details.map((e) => e.message).join(', '),
-                },
+                    title: 'Validation Erorr',
+                    detail: e.message,
+                })),
             });
         } else {
             res.status(500).json({
-                error: {
-                    status: 500,
-                    message: process.env.APP_DEBUG ? err.message : 'An unexpected error occurred',
-                },
+                errors: [
+                    {
+                        status: 500,
+                        title: 'Unexpected Error',
+                        detail: process.env.APP_DEBUG ? err.message : 'An unexpected error occurred',
+                    },
+                ],
             });
         }
     }
