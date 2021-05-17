@@ -1,9 +1,12 @@
 import { Layout } from '../components/layout/Layout';
+import { Page } from '../components/layout/Page';
 
 export default function Home() {
     return (
         <Layout>
-            <p>Turbo</p>
+            <Page>
+                <p>Turbo</p>
+            </Page>
         </Layout>
     );
 }
