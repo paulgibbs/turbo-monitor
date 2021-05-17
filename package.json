@@ -18,13 +18,13 @@
         "dotenv": "9.0.2",
         "joi": "17.4.0",
         "knex": "0.21.19",
-        "modern-normalize": "1.1.0",
         "mysql2": "2.2.5",
         "next": "10.2.0",
         "objection": "2.2.15",
         "react": "17.0.2",
         "react-dom": "17.0.2",
-        "sass": "1.32.13"
+        "styled-components": "5.3.0",
+        "styled-normalize": "8.0.7"
     },
     "devDependencies": {
         "@crgeary/configuration-prettier": "1.0.3",
