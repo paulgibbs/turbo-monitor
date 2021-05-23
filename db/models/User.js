@@ -1,6 +1,9 @@
-const { Model } = require('objection');
+import { Model } from 'objection';
 
-const { hashPassword } = require('../../lib/auth');
+import { db } from '../db/db';
+import { hashPassword } from '../../lib/auth';
+
+Model.knex(db);
 
 class User extends Model {
     static get tableName() {
@@ -43,6 +46,4 @@ class User extends Model {
     }
 }
 
-module.exports = {
-    User,
-};
+export { User };
