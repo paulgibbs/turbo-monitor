@@ -1,6 +1,6 @@
 import { Model } from 'objection';
 
-import { db } from '../db/db';
+import { db } from '../db';
 import { hashPassword } from '../../lib/auth';
 
 Model.knex(db);

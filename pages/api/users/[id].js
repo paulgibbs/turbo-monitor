@@ -1,7 +1,7 @@
 import Joi from 'joi';
 
 import { User } from '../../../db/models/User';
-import db from '../../../db/db';
+import { db } from '../../../db/db';
 
 const handler = async (req, res) => {
     const { query, body, method } = req;
