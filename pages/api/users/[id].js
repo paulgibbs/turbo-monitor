@@ -1,4 +1,4 @@
-import Joi from 'joi';
+import * as yup from 'yup';
 
 import { User } from '../../../db/models/User';
 import { db } from '../../../db/db';
@@ -25,13 +25,13 @@ const handler = async (req, res) => {
         } else if (method === 'PUT') {
             const { name, email, password } = body;
 
-            const schema = Joi.object({
-                name: Joi.string(),
-                email: Joi.string().email().required(),
-                password: Joi.string().min(8),
+            const schema = yup.object().shape({
+                name: yup.string(),
+                email: yup.string().email().required(),
+                password: yup.string().min(8),
             });
 
-            Joi.assert({ name, email, password }, schema);
+            await schema.validate({ name, email, password });
 
             await User.query()
                 .findById(user.id)
@@ -50,12 +50,12 @@ const handler = async (req, res) => {
             res.status(405).end();
         }
     } catch (err) {
-        if (Joi.isError(err)) {
+        if (err instanceof yup.ValidationError) {
             return res.status(422).json({
-                errors: err.details.map((e) => ({
+                errors: err.errors.map((message) => ({
                     status: 422,
                     title: 'Validation Erorr',
-                    detail: e.message,
+                    detail: message,
                 })),
             });
         } else {
