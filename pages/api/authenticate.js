@@ -2,9 +2,12 @@ import * as yup from 'yup';
 import { serialize } from 'cookie';
 import dayjs from 'dayjs';
 
+import { db } from '../../db/db';
 import { User } from '../../db/models/User';
 import { checkPassword } from '../../lib/auth';
+import { createSessionId, createSecureSessionId } from '../../lib/session';
 import { AUTH_COOKIE_NAME } from '../../lib/constants';
+import { encryptSession } from '../../lib/crypto';
 
 const handler = async (req, res) => {
     const { method, body } = req;
@@ -24,7 +27,26 @@ const handler = async (req, res) => {
             if (user instanceof User) {
                 const isValidPassword = await checkPassword(user.password, password);
                 if (isValidPassword) {
-                    const authCookie = serialize(AUTH_COOKIE_NAME, '{@todo: JWT}', {
+                    const sessionId = createSessionId();
+                    const secureSessionId = createSecureSessionId(sessionId);
+                    await db
+                        .insert([
+                            {
+                                id: sessionId,
+                                user_id: user.id,
+                                ip_address: req.headers['X-Forwarded-For'] ?? req.connection.remoteAddress,
+                                user_agent: req.headers['user-agent'] ?? '',
+                                payload: encryptSession(
+                                    JSON.stringify({
+                                        auth: user.id,
+                                    })
+                                ),
+                                last_activity: dayjs().unix(),
+                            },
+                        ])
+                        .into('sessions');
+
+                    const authCookie = serialize(AUTH_COOKIE_NAME, secureSessionId, {
                         expires: dayjs().add(2, 'weeks').toDate(),
                         httpOnly: true,
                         path: '/',
