@@ -4,9 +4,8 @@ import dayjs from 'dayjs';
 
 import { db } from '../../db/db';
 import { User } from '../../db/models/User';
-import { checkPassword } from '../../lib/auth';
+import { checkPassword, AUTH_COOKIE_NAME } from '../../lib/auth';
 import { createSessionId, createSecureSessionId } from '../../lib/session';
-import { AUTH_COOKIE_NAME } from '../../lib/constants';
 import { encryptSession } from '../../lib/crypto';
 
 const handler = async (req, res) => {
