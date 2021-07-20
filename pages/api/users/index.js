@@ -2,6 +2,7 @@ import * as yup from 'yup';
 
 import { User } from '../../../db/models/User';
 import { db } from '../../../db/db';
+import { withAuth } from '../../../lib/middleware';
 
 const handler = async (req, res) => {
     const { method, body } = req;
@@ -58,4 +59,4 @@ const handler = async (req, res) => {
     }
 };
 
-export default handler;
+export default withAuth(handler);
