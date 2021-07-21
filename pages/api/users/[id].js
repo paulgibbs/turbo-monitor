@@ -2,9 +2,22 @@ import * as yup from 'yup';
 
 import { User } from '../../../db/models/User';
 import { db } from '../../../db/db';
-import { withAuth } from '../../../lib/middleware';
+import { getSession } from '../../../lib/middleware';
 
 const handler = async (req, res) => {
+    const session = await getSession({ req });
+
+    if (session === null) {
+        return res.status(401).json({
+            errors: [
+                {
+                    status: '401',
+                    title: 'Not Authenticated',
+                },
+            ],
+        });
+    }
+
     const { query, body, method } = req;
 
     const user = await User.query().findById(query.id);
@@ -73,4 +86,4 @@ const handler = async (req, res) => {
     }
 };
 
-export default withAuth(handler);
+export default handler;
