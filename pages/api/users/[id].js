@@ -1,5 +1,6 @@
 import * as yup from 'yup';
 
+import { useHandler } from '../../../lib/http';
 import { User } from '../../../db/models/User';
 import { db } from '../../../db/db';
 import { getSession } from '../../../lib/middleware';
@@ -31,59 +32,37 @@ const handler = async (req, res) => {
         });
     }
 
-    try {
-        if (method === 'GET') {
-            res.status(200).json({
-                data: user,
-            });
-        } else if (method === 'PUT') {
-            const { name, email, password } = body;
+    if (method === 'GET') {
+        res.status(200).json({
+            data: user,
+        });
+    } else if (method === 'PUT') {
+        const { name, email, password } = body;
 
-            const schema = yup.object().shape({
-                name: yup.string(),
-                email: yup.string().email().required(),
-                password: yup.string().min(8),
-            });
+        const schema = yup.object().shape({
+            name: yup.string(),
+            email: yup.string().email().required(),
+            password: yup.string().min(8),
+        });
 
-            await schema.validate({ name, email, password });
+        await schema.validate({ name, email, password });
 
-            await User.query()
-                .findById(user.id)
-                .patch({
-                    name: name,
-                    email: email,
-                    password: password,
-                    updated_at: db.raw('NOW()'),
-                });
-            res.status(204).end();
-        } else if (method === 'DELETE') {
-            await User.query().deleteById(user.id);
-            res.status(204).end();
-        } else {
-            res.setHeader('Allow', ['GET', 'PUT', 'DELETE']);
-            res.status(405).end();
-        }
-    } catch (err) {
-        if (err instanceof yup.ValidationError) {
-            return res.status(422).json({
-                errors: err.errors.map((message) => ({
-                    status: 422,
-                    title: 'Validation Erorr',
-                    detail: message,
-                })),
+        await User.query()
+            .findById(user.id)
+            .patch({
+                name: name,
+                email: email,
+                password: password,
+                updated_at: db.raw('NOW()'),
             });
-        } else {
-            res.status(500).json({
-                errors: [
-                    {
-                        status: 500,
-                        title: 'Unexpected Error',
-                        detail: process.env.APP_DEBUG ? err.message : 'An unexpected error occurred',
-                    },
-                ],
-            });
-        }
+        res.status(204).end();
+    } else if (method === 'DELETE') {
+        await User.query().deleteById(user.id);
+        res.status(204).end();
+    } else {
+        res.setHeader('Allow', ['GET', 'PUT', 'DELETE']);
+        res.status(405).end();
     }
 };
 
-export default handler;
+export default useHandler(handler);
