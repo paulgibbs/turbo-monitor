@@ -15,10 +15,10 @@
     },
     "dependencies": {
         "aes256": "1.1.0",
-        "argon2": "0.28.1",
+        "argon2": "0.28.2",
         "cookie": "0.4.1",
         "cookie-signature": "1.1.0",
-        "dayjs": "1.10.5",
+        "dayjs": "1.10.6",
         "dotenv": "10.0.0",
         "formik": "2.2.9",
         "knex": "0.21.19",
@@ -33,12 +33,12 @@
     },
     "devDependencies": {
         "@crgeary/configuration-prettier": "1.0.3",
-        "eslint": "7.27.0",
+        "eslint": "7.31.0",
         "eslint-config-prettier": "8.3.0",
         "eslint-plugin-react": "7.24.0",
         "husky": "6.0.0",
-        "lint-staged": "11.0.0",
-        "prettier": "2.3.0"
+        "lint-staged": "11.1.0",
+        "prettier": "2.3.2"
     },
     "lint-staged": {
         "**/*.+(js|jsx)": [
