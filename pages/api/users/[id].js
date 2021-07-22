@@ -3,10 +3,10 @@ import * as yup from 'yup';
 import { useHandler } from '../../../lib/http';
 import { User } from '../../../db/models/User';
 import { db } from '../../../db/db';
-import { getSession } from '../../../lib/middleware';
+import { withSession } from '../../../lib/session';
 
 const handler = async (req, res) => {
-    const session = await getSession({ req });
+    const session = await withSession({ req });
 
     if (session === null) {
         return res.status(401).json({
