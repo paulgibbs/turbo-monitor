@@ -6,7 +6,7 @@ import { useHandler } from '../../lib/http';
 import { db } from '../../db/db';
 import { User } from '../../db/models/User';
 import { checkPassword, AUTH_COOKIE_NAME } from '../../lib/auth';
-import { createSessionId, createSecureSessionId } from '../../lib/session';
+import { createSessionId, createSecureSessionId, withSession, removeSessionById } from '../../lib/session';
 import { encryptSession } from '../../lib/crypto';
 
 const handler = async (req, res) => {
@@ -64,8 +64,22 @@ const handler = async (req, res) => {
                 message: 'The email or password is incorrect',
             },
         });
+    } else if (method === 'DELETE') {
+        const session = await withSession({ req });
+        if (session === null) {
+            return res.status(401).json({
+                errors: [
+                    {
+                        status: '401',
+                        title: 'Not Authenticated',
+                    },
+                ],
+            });
+        }
+        await removeSessionById(session.id);
+        return res.status(204).end();
     } else {
-        res.setHeader('Allow', ['POST']);
+        res.setHeader('Allow', ['POST', 'DELETE']);
         res.status(405).end();
     }
 };
